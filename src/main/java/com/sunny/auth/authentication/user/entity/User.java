@@ -1,7 +1,11 @@
 package com.sunny.auth.authentication.user.entity;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import org.springframework.security.core.GrantedAuthority;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sunny.auth.authentication.utils.BaseClass;
 
@@ -11,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -60,6 +65,18 @@ public class User extends BaseClass implements Serializable {
 	@Size(max = 50, message = "Password should be upto 50 characters long")
 	private String password;
 
+	@NotEmpty(message = "Usertype cannot be empty")
+	@Column(length = 10)
+	@EqualsAndHashCode.Include
+	@Size(max = 10, message = "UserType should be upto 10 characters long")
+	private String userType;
+
+	@NotEmpty(message = "User role cannot be empty")
+	@Column(length = 10)
+	@EqualsAndHashCode.Include
+	@Size(max = 10, message = "User role should be upto 10 characters long")
+	private String userRole;
+
 	@Email
 	@NotEmpty(message = "Email cannot be empty")
 	@Column(length = 50)
@@ -72,4 +89,8 @@ public class User extends BaseClass implements Serializable {
 	private Integer isLocked;
 
 	private Integer isActive = 1;
+
+	@Transient
+	@JsonIgnore
+	private Set<GrantedAuthority> authorities;
 }
