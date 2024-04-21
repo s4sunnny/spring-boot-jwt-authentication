@@ -22,9 +22,11 @@ public class UserServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUserName(username)
-				.orElseThrow(() -> new BadCredentialsException("BAd Credential"));
-		
+		System.out.println(username);
+		User user = userRepository.findByUserName(username);
+		if(user == null) {
+			throw new UsernameNotFoundException("Badcredential");
+		}
 		Set<GrantedAuthority> ga = new HashSet<GrantedAuthority>();
 		ga.add(new SimpleGrantedAuthority("ROLE_" + user.getUserRole()));
 		user.setAuthorities(ga);

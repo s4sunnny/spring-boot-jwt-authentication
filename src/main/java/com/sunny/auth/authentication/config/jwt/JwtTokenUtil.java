@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -25,30 +26,21 @@ public class JwtTokenUtil implements Serializable {
 
 	private static final long serialVersionUID = -2550185165626007488L;
 
-	@Value("${jwt.secret.key}")
-	private String key;
-
-	@Value("${jwt.secret.algorithm}")
-	private String algorithm;
-
-	@Value("${jwt.secret.issuer}")
-	private String issuer;
-
-	@Value("${jwt.secret.expiresIn}")
-	private String expiresIn;
+	@Autowired
+	private JwtProperties jwtProperties;
 
 	public String generateJWT(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("sub", userDetails.getUsername());
 		claims.put("scope", userDetails.getAuthorities());
 
-		var header = new JWSHeader(JWSAlgorithm.parse(algorithm));
+		var header = new JWSHeader(jwtProperties.getAlgorithm());
 		var claimsSet = buildClaimsSet(claims);
 
 		var jwt = new SignedJWT(header, claimsSet);
 
 		try {
-			var signer = new MACSigner(key);
+			var signer = new MACSigner(jwtProperties.getKey());
 			jwt.sign(signer);
 		} catch (JOSEException e) {
 			throw new RuntimeException("Unable to generate JWT", e);
@@ -59,9 +51,9 @@ public class JwtTokenUtil implements Serializable {
 
 	private JWTClaimsSet buildClaimsSet(Map<String, Object> claims) {
 		var issuedAt = Instant.now();
-		var expirationTime = issuedAt.plus(Duration.parse(expiresIn));
+		var expirationTime = issuedAt.plus(jwtProperties.getExpiresIn());
 
-		var builder = new JWTClaimsSet.Builder().issuer(issuer).issueTime(Date.from(issuedAt))
+		var builder = new JWTClaimsSet.Builder().issuer(jwtProperties.getIssuer()).issueTime(Date.from(issuedAt))
 				.expirationTime(Date.from(expirationTime));
 
 		claims.forEach(builder::claim);

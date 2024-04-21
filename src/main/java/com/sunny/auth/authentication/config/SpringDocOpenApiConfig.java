@@ -22,7 +22,7 @@ public class SpringDocOpenApiConfig {
 
 	@Bean
 	public GroupedOpenApi userApi() {
-		return GroupedOpenApi.builder().group("user").pathsToMatch("/user/**").build();
+		return GroupedOpenApi.builder().group("user").pathsToMatch("/**").build();
 	}
 
 	@Bean
