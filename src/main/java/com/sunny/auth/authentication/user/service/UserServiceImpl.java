@@ -10,11 +10,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import com.sunny.auth.authentication.user.entity.User;
 import com.sunny.auth.authentication.user.entity.UserSession;
 import com.sunny.auth.authentication.user.repository.UserRepository;
 
+@Service
 public class UserServiceImpl implements UserDetailsService {
 
 	@Autowired
@@ -22,7 +24,6 @@ public class UserServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		System.out.println(username);
 		User user = userRepository.findByUserName(username);
 		if(user == null) {
 			throw new UsernameNotFoundException("Badcredential");
