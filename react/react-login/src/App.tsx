@@ -54,7 +54,7 @@ const FormSchema = z.object({
 // }
 
 function App() {
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState("");
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
