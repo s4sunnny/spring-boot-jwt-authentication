@@ -13,16 +13,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useState } from "react";
+// import {
+//   AlertDialog,
+//   AlertDialogAction,
+//   AlertDialogCancel,
+//   AlertDialogContent,
+//   AlertDialogDescription,
+//   AlertDialogFooter,
+//   AlertDialogHeader,
+//   AlertDialogTitle,
+// } from "@/components/ui/alert-dialog";
 
 const FormSchema = z.object({
   username: z.string().min(1, {
@@ -33,26 +34,27 @@ const FormSchema = z.object({
   }),
 });
 
-const dialogBox = () => {
-  return (
-    <AlertDialog>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Login successfull</AlertDialogTitle>
-          <AlertDialogDescription>
-            {/* your token is {response.token} */}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-};
+// function openAlert() {
+//   return (
+//     <AlertDialog>
+//       <AlertDialogContent>
+//         <AlertDialogHeader>
+//           <AlertDialogTitle>Login successfull</AlertDialogTitle>
+//           <AlertDialogDescription>
+//             {/* your token is {response.token} */}
+//           </AlertDialogDescription>
+//         </AlertDialogHeader>
+//         <AlertDialogFooter>
+//           <AlertDialogCancel>Cancel</AlertDialogCancel>
+//           <AlertDialogAction>Continue</AlertDialogAction>
+//         </AlertDialogFooter>
+//       </AlertDialogContent>
+//     </AlertDialog>
+//   );
+// }
 
 function App() {
+  const [message, setMessage] = useState(null);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -72,15 +74,12 @@ function App() {
     }).then((resp) => {
       return resp.json();
     });
-    dialogBox;
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // });
+    response.status == 500
+      ? setMessage("Message - " + response.message)
+      : setMessage("Your token is - " + response.token);
+    // setToken(response.token);
+    // return response;
+    // openAlert();
   }
   return (
     <>
@@ -125,10 +124,13 @@ function App() {
                 type="submit"
                 className="bg-gradient-to-r from-gray-400 to-blue-500 hover:from-emerald-500 hover:to-indigo-500"
               >
-                Submit
+                Login
               </Button>
             </form>
           </Form>
+          {message && (
+            <div className="py-5 text-wrap break-words">{message}</div>
+          )}
         </div>
       </div>
     </>
